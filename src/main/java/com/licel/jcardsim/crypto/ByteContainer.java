@@ -119,7 +119,8 @@ public final class ByteContainer {
                     break;
             }
         }
-        Util.arrayCopy(buff, offset, data, (short) 0, length);
+        if (length > 0)
+            Util.arrayCopy(buff, offset, data, (short) 0, length);
         // current length
         this.length = length;
     }
