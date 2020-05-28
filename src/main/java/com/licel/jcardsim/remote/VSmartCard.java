@@ -36,6 +36,7 @@ import sun.misc.SignalHandler;
 public class VSmartCard {
 
     Simulator sim;
+    static boolean logToStdout;
 
     public VSmartCard(String host, int port) throws IOException {
         VSmartCardTCPProtocol driverProtocol = new VSmartCardTCPProtocol();
@@ -80,6 +81,10 @@ public class VSmartCard {
             throw new InvalidParameterException("Missing value for property: " + propKey);
         }
 
+        propKey = "com.licel.jcardsim.vsmartcard.dump";
+        String dump = System.getProperty(propKey);
+        logToStdout = dump != null ? Integer.parseInt(dump) != 0 : false;
+
         new VSmartCard(host, Integer.parseInt(port));
     }
 
@@ -123,6 +128,24 @@ public class VSmartCard {
             Signal.handle(new Signal("USR2"), this);
         }
 
+       private void hexDump(byte[] apdu) {
+            for (int i = 0; i < apdu.length; i += 8) {
+                System.out.printf("%04X:  ", i);
+                for (int j = i; j < i + 4; ++j) {
+                    if (j >= apdu.length)
+                        break;
+                    System.out.printf("%02X ", apdu[j]);
+                }
+                System.out.printf(" ");
+                for (int j = i + 4; j < i + 8; ++j) {
+                    if (j >= apdu.length)
+                        break;
+                    System.out.printf("%02X ", apdu[j]);
+                }
+                System.out.printf("\n");
+            }
+        }
+
         @Override
         public void run() {
             while (isRunning) {
@@ -143,7 +166,15 @@ public class VSmartCard {
                             break;
                         case VSmartCardTCPProtocol.APDU:
                             final byte[] apdu = driverProtocol.readData();
+                            if (logToStdout) {
+                                System.out.println("== APDU");
+                                hexDump(apdu);
+                            }
                             final byte[] reply = CardManager.dispatchApdu(sim, apdu);
+                            if (logToStdout) {
+                                System.out.println("== Reply APDU");
+                                hexDump(reply);
+                            }
                             driverProtocol.writeData(reply);
                             break;
                     }
