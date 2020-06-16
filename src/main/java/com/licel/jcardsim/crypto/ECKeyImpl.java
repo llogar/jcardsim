@@ -292,6 +292,19 @@ public abstract class ECKeyImpl extends KeyImpl implements ECKey {
                 x9params.getN(), x9params.getH(), x9params.getSeed());
     }
     public void copyDomainParametersFrom(ECKey eckey) throws CryptoException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        short len;
+        byte tmp[] = new byte[256];
+        len = eckey.getA(tmp, (short) 0);
+        setA(tmp, (short) 0, len);
+        len = eckey.getB(tmp, (short) 0);
+        setB(tmp, (short) 0, len);
+        len = eckey.getField(tmp, (short) 0);
+        setFieldFP(tmp, (short) 0, len);
+        len = eckey.getG(tmp, (short) 0);
+        setG(tmp, (short) 0, len);
+        setK(eckey.getK());
+        len = eckey.getR(tmp, (short) 0);
+        setR(tmp, (short) 0, len);
+        tmp = null;
     }
 }
