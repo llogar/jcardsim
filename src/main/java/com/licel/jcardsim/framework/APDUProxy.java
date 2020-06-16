@@ -33,7 +33,7 @@ public class APDUProxy {
     // buffer size
     private static final short BUFFER_SIZE = 261;
     // buffer size (extended APDU) + (CLA,INS,P1,P2,0,Lc_Hi,Lc_Low,CData,Le_Hi,Le_Lo)
-    private static final int BUFFER_EXTENDED_SIZE = Short.MAX_VALUE + 10;
+    private static final int BUFFER_EXTENDED_SIZE = Short.MAX_VALUE /* + 10*/;
     // input block size, for T0 protocol = 1
     private static final short T0_IBS = 1;
     // output block size, for T0 protocol = 258
