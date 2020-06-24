@@ -89,6 +89,11 @@ public class AsymmetricCipherImpl extends Cipher {
         if ((outBuff.length - outOffset) < engine.getOutputBlockSize()) {
             CryptoException.throwIt(CryptoException.ILLEGAL_USE);
         }
+        // Border case where inLength is a full RSA keylength size
+        if (inOffset == 0 && inLength == buffer.length + 1 && inBuff[0] == 0x00) {
+            inOffset++;
+            inLength--;
+        }
         update(inBuff, inOffset, inLength, outBuff, outOffset);
         if (algorithm != ALG_RSA_PKCS1) {
             if ((bufferPos < engine.getInputBlockSize()) && (paddingEngine == null)) {
